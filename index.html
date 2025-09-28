@@ -10,45 +10,53 @@
         /* CSS: Estilo Cósmico y Adaptabilidad Móvil */
         /* ========================================= */
         
-        /* Estilos Cósmicos y Reset Básico */
+        /* Reset Básico y Unidades Relativas para Móvil */
         body {
             font-family: 'Consolas', monospace; /* Fuente de estilo Sci-Fi */
             background-color: #0d1a26; /* Espacio profundo */
             color: #e6e6ff; /* Texto claro */
             margin: 0;
-            padding: 20px;
+            padding: 1rem; /* Usar rem para espaciado base */
             display: flex;
+            flex-direction: column; /* Apilar elementos verticalmente */
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             min-height: 100vh;
         }
 
         /* Contenedor Principal (Adaptado a móvil) */
         #game-container {
             background-color: #1a2a38; /* Color de panel de control */
-            padding: 30px;
+            padding: 1.5rem;
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); /* Brillo Sci-Fi */
-            width: 100%;
-            max-width: 450px; 
+            width: 95%; /* Ocupa casi todo el ancho */
+            max-width: 450px; /* Límite para pantallas grandes */
             text-align: center;
             border: 3px solid #00ffff; /* Borde de energía */
+            box-sizing: border-box; /* Incluir padding y border en el width */
         }
 
         h1 {
             color: #00ffff; /* Cian brillante */
             text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
-            margin-bottom: 5px;
+            margin-bottom: 0.5rem;
+            font-size: 2rem; /* Tamaño de fuente relativo */
+        }
+        
+        p {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
 
         /* Barra de Estado (Información de Nivel y Puntuación) */
         #status-bar {
             display: flex;
             justify-content: space-between;
-            margin: 15px 0;
+            margin: 1rem 0;
             font-size: 1em;
             font-weight: bold;
-            padding: 10px;
+            padding: 0.8rem;
             border-radius: 8px;
             background-color: #0e1820;
             border: 1px solid #334a5d;
@@ -56,6 +64,7 @@
 
         #level-info, #score-info {
             flex-basis: 50%;
+            font-size: 0.9rem;
         }
 
         #level-theme {
@@ -65,35 +74,40 @@
 
         /* Caja de Pregunta */
         #question-box {
-            margin: 20px 0;
-            padding: 20px;
+            margin: 1rem 0;
+            padding: 1rem;
             border: 2px dashed #00ffff;
             border-radius: 10px;
             background-color: #1a2a38;
         }
 
         #pi-prefix {
-            font-size: 1.8em;
+            font-size: 1.8rem;
             color: #e9573f; /* Rojo/Naranja para la parte conocida de Pi */
             font-weight: bolder;
-            word-wrap: break-word; /* Importante para decimales largos en móvil */
-            padding: 10px;
+            word-wrap: break-word; 
+            padding: 0.5rem;
             background-color: #0e1820;
             border-radius: 5px;
-            margin: 10px 0;
+            margin: 0.5rem 0;
+            /* Flexbox para mantener los dígitos en línea horizontalmente */
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center;
         }
 
-        /* Opciones de Respuesta (Grid adaptado) */
+        /* Opciones de Respuesta (Grid adaptado para móvil) */
         .options-grid {
             display: grid;
+            /* Columnas automáticas: Mínimo 100px por columna */
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
-            gap: 10px;
-            margin-top: 20px;
+            gap: 0.5rem; /* Espaciado más compacto */
+            margin-top: 1rem;
         }
 
         .option-button {
-            padding: 15px 10px;
-            font-size: 1.1em;
+            padding: 0.8rem 0.5rem;
+            font-size: 1rem;
             border: none;
             border-radius: 8px;
             background-color: #007bff;
@@ -112,10 +126,10 @@
 
         /* Estilos de Feedback */
         #feedback {
-            min-height: 30px; 
-            margin: 15px 0;
+            min-height: 2rem; 
+            margin: 1rem 0;
             font-weight: bold;
-            font-size: 1.2em;
+            font-size: 1.1rem;
         }
 
         .correct {
@@ -130,8 +144,8 @@
 
         /* Botón Siguiente */
         #next-button {
-            padding: 12px 25px;
-            font-size: 1.1em;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
             background-color: #ffc107; 
             color: #333;
             border: none;
@@ -139,16 +153,93 @@
             cursor: pointer;
             transition: background-color 0.2s;
             font-weight: bold;
+            width: 100%; /* Ocupa todo el ancho disponible */
+            box-sizing: border-box;
         }
 
         /* Estilo de Game Over */
         #game-over {
-            padding: 30px;
+            padding: 1.5rem;
             background-color: #491c1c; /* Fondo de alerta */
             border: 1px solid #dc3545;
             color: #fff;
             border-radius: 10px;
-            margin-top: 20px;
+            margin-top: 1rem;
+        }
+
+        /* Sección de Créditos (Nueva) */
+        #info-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: #00ffff;
+            color: #0d1a26;
+            border: none;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1000; /* Asegura que esté por encima de todo */
+        }
+        
+        #credits-modal {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.85); /* Fondo oscuro con transparencia */
+            padding-top: 2rem;
+        }
+        
+        .modal-content {
+            background-color: #1a2a38;
+            margin: 5% auto; /* 5% arriba y centrado */
+            padding: 20px;
+            border: 3px solid #00ffff;
+            border-radius: 15px;
+            width: 90%; /* Ancho para móvil */
+            max-width: 400px; /* Ancho máximo */
+            color: #e6e6ff;
+            text-align: left;
+        }
+
+        .close-button {
+            color: #00ffff;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .pi-value {
+            font-size: 0.9rem;
+            word-wrap: break-word;
+            background-color: #0e1820;
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+        }
+
+        /* Media Query para pantallas más grandes */
+        @media (min-width: 600px) {
+            #game-container {
+                padding: 2rem;
+            }
+            .option-button {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
@@ -157,6 +248,8 @@
         <h1>🚀 Pi-Navegator 🚀</h1>
         <p>Adivina los decimales del número &pi; para calcular la siguiente órbita.</p>
         
+        <button id="info-button" onclick="openModal()">(i)</button>
+
         <div id="status-bar">
             <div id="level-info">
                 Nivel: <span id="current-level">1</span> (<span id="level-theme">Órbita Terrestre</span>)
@@ -181,6 +274,34 @@
             <h2>¡Misión Fallida! 💀</h2>
             <p>Tu nave se desvió en el Nivel <span id="final-level"></span>. Distancia total: <span id="final-score"></span> puntos.</p>
             <button onclick="location.reload()">Reiniciar Navegación 🔄</button>
+        </div>
+    </div>
+
+    <div id="credits-modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2 style="color: #00ffff; text-align: center;">Centro de Comando 🛰️</h2>
+            <hr style="border-color: #334a5d; margin-bottom: 1rem;">
+            
+            <p style="font-style: italic; text-align: center;">
+                "La vida es el conjunto de Pi con un error."
+            </p>
+            
+            <h3 style="color: #ffc107; font-size: 1.1rem; margin-top: 1.5rem;">Créditos</h3>
+            <p>
+                **Ideado por:** Jason Dafnis
+            </p>
+            
+            <h3 style="color: #ffc107; font-size: 1.1rem; margin-top: 1.5rem;">Decimales de &pi; (Ruta de Misión)</h3>
+            <p>
+                El número &pi; comienza con:
+            </p>
+            <div class="pi-value">
+                **3.14159265358979323846264338327950288419716939937510**...
+            </div>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+                (La longitud de esta ruta es de 50 decimales).
+            </p>
         </div>
     </div>
 
@@ -213,6 +334,23 @@
         const feedbackEl = document.getElementById('feedback');
         const nextButton = document.getElementById('next-button');
         const gameOverEl = document.getElementById('game-over');
+        const creditsModal = document.getElementById('credits-modal');
+
+        // --- Funciones de Modal (Créditos) ---
+        function openModal() {
+            creditsModal.style.display = 'block';
+        }
+
+        function closeModal() {
+            creditsModal.style.display = 'none';
+        }
+
+        // Cierra el modal si el usuario hace clic fuera de él
+        window.onclick = function(event) {
+            if (event.target == creditsModal) {
+                closeModal();
+            }
+        }
 
         // --- Funciones de Utilidad ---
 
@@ -260,11 +398,11 @@
 
             // 2. Dificultad de Opciones (Número de opciones)
             if (currentLevel <= 3) {
-                numOptions = 2; // N1-3: 2 opciones (Tu nivel 1 original)
+                numOptions = 2; 
             } else if (currentLevel <= 6) {
-                numOptions = 3; // N4-6: 3 opciones (Tu nivel 2 original)
+                numOptions = 3;
             } else if (currentLevel <= 9) {
-                numOptions = 4; // N7-9: 4 opciones
+                numOptions = 4; 
             } else {
                 numOptions = 5; // N10+: Máximo 5 opciones
             }
@@ -336,7 +474,10 @@
                 feedbackEl.className = 'incorrect';
                 
                 // Marcar la respuesta correcta en amarillo (alerta)
-                Array.from(optionsEl.children).find(btn => btn.textContent.replace(/\s/g, '') === correctAnswer).style.backgroundColor = '#ffc107';
+                const correctBtn = Array.from(optionsEl.children).find(btn => btn.textContent.replace(/\s/g, '') === correctAnswer);
+                if (correctBtn) {
+                    correctBtn.style.backgroundColor = '#ffc107';
+                }
                 
                 endGame(false);
             }
