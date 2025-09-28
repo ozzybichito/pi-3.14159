@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi-Navegator 🚀</title>
+    
+    <style>
+        /* ========================================= */
+        /* CSS: Estilo Cósmico y Adaptabilidad Móvil */
+        /* ========================================= */
+        
+        /* Estilos Cósmicos y Reset Básico */
+        body {
+            font-family: 'Consolas', monospace; /* Fuente de estilo Sci-Fi */
+            background-color: #0d1a26; /* Espacio profundo */
+            color: #e6e6ff; /* Texto claro */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        /* Contenedor Principal (Adaptado a móvil) */
+        #game-container {
+            background-color: #1a2a38; /* Color de panel de control */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); /* Brillo Sci-Fi */
+            width: 100%;
+            max-width: 450px; 
+            text-align: center;
+            border: 3px solid #00ffff; /* Borde de energía */
+        }
+
+        h1 {
+            color: #00ffff; /* Cian brillante */
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
+            margin-bottom: 5px;
+        }
+
+        /* Barra de Estado (Información de Nivel y Puntuación) */
+        #status-bar {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            font-size: 1em;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #0e1820;
+            border: 1px solid #334a5d;
+        }
+
+        #level-info, #score-info {
+            flex-basis: 50%;
+        }
+
+        #level-theme {
+            font-style: italic;
+            color: #ffc107;
+        }
+
+        /* Caja de Pregunta */
+        #question-box {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #00ffff;
+            border-radius: 10px;
+            background-color: #1a2a38;
+        }
+
+        #pi-prefix {
+            font-size: 1.8em;
+            color: #e9573f; /* Rojo/Naranja para la parte conocida de Pi */
+            font-weight: bolder;
+            word-wrap: break-word; /* Importante para decimales largos en móvil */
+            padding: 10px;
+            background-color: #0e1820;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        /* Opciones de Respuesta (Grid adaptado) */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .option-button {
+            padding: 15px 10px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .option-button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+
+        .option-button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        /* Estilos de Feedback */
+        #feedback {
+            min-height: 30px; 
+            margin: 15px 0;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .correct {
+            color: #28a745; /* Verde de éxito */
+            text-shadow: 0 0 5px #28a745;
+        }
+
+        .incorrect {
+            color: #dc3545; /* Rojo de fallo */
+            text-shadow: 0 0 5px #dc3545;
+        }
+
+        /* Botón Siguiente */
+        #next-button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            background-color: #ffc107; 
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: bold;
+        }
+
+        /* Estilo de Game Over */
+        #game-over {
+            padding: 30px;
+            background-color: #491c1c; /* Fondo de alerta */
+            border: 1px solid #dc3545;
+            color: #fff;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>🚀 Pi-Navegator 🚀</h1>
+        <p>Calcula la siguiente órbita con los decimales de $\pi$.</p>
+        
+        <div id="status-bar">
+            <div id="level-info">
+                Nivel: <span id="current-level">1</span> (<span id="level-theme">Órbita Terrestre</span>)
+            </div>
+            <div id="score-info">
+                Distancia (Puntos): <span id="current-score">0</span>
+            </div>
+        </div>
+        
+        <div id="question-box">
+            <p>La **secuencia** que sigue a:</p>
+            <div id="pi-prefix">3.</div>
+            <p>es:</p>
+            <div id="answer-options" class="options-grid">
+                </div>
+        </div>
+        
+        <div id="feedback"></div>
+        <button id="next-button" style="display:none;">Impulso de Motor (Siguiente Nivel) ▶️</button>
+        
+        <div id="game-over" style="display:none;">
+            <h2>¡Misión Fallida! 💀</h2>
+            <p>Tu nave se desvió en el Nivel <span id="final-level"></span>. Distancia total: <span id="final-score"></span> puntos.</p>
+            <button onclick="location.reload()">Reiniciar Navegación 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        /* ========================================= */
+        /* JAVASCRIPT: Lógica del Pi-Navegator */
+        /* ========================================= */
+        
+        const PI_DECIMALS = "14159265358979323846264338327950288419716939937510"; // Los primeros 50 decimales
+
+        // Temas para los niveles (para la narrativa)
+        const LEVEL_THEMES = [
+            { maxLevel: 10, name: "Sistema Solar" },
+            { maxLevel: 20, name: "Galaxia Local" },
+            { maxLevel: Infinity, name: "El Borde del Cosmos" }
+        ];
+
+        let currentLevel = 1;
+        let currentDecimalIndex = 0;
+        let currentScore = 0;
+        let answerLength = 1; 
+        let numOptions = 2;   
+
+        // Referencias del DOM
+        const levelEl = document.getElementById('current-level');
+        const themeEl = document.getElementById('level-theme');
+        const scoreEl = document.getElementById('current-score');
+        const prefixEl = document.getElementById('pi-prefix');
+        const optionsEl = document.getElementById('answer-options');
+        const feedbackEl = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-button');
+        const gameOverEl = document.getElementById('game-over');
+
+        // --- Funciones de Utilidad ---
+
+        function getRandomDigits(length) {
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += Math.floor(Math.random() * 10);
+            }
+            return result;
+        }
+
+        function generateOptions(correctAnswer, totalOptions) {
+            let options = new Set();
+            options.add(correctAnswer);
+            const length = correctAnswer.length;
+            
+            while (options.size < totalOptions) {
+                let randomOption = getRandomDigits(length);
+                if (randomOption !== correctAnswer) {
+                    options.add(randomOption);
+                }
+            }
+            
+            // Mezclar las opciones
+            let optionsArray = Array.from(options);
+            for (let i = optionsArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsArray[i], optionsArray[j]] = [optionsArray[j], optionsArray[i]];
+            }
+            
+            return optionsArray;
+        }
+
+        // --- Lógica de Niveles y Temática ---
+
+        function updateGameParameters() {
+            // 1. Dificultad de la Respuesta (Longitud de la secuencia)
+            if (currentLevel <= 10) {
+                answerLength = 1; // 1 dígito (Niveles 1-10)
+            } else if (currentLevel <= 20) {
+                answerLength = 2; // 2 dígitos (Niveles 11-20)
+            } else {
+                answerLength = 3; // 3 dígitos (Nivel 21+)
+            }
+
+            // 2. Dificultad de Opciones (Número de opciones)
+            if (currentLevel <= 3) {
+                numOptions = 2; // N1-3: 2 opciones (Tu nivel 1 original)
+            } else if (currentLevel <= 6) {
+                numOptions = 3; // N4-6: 3 opciones (Tu nivel 2 original)
+            } else if (currentLevel <= 9) {
+                numOptions = 4; // N7-9: 4 opciones
+            } else {
+                numOptions = 5; // N10+: Máximo 5 opciones
+            }
+
+            // 3. Temática
+            const currentTheme = LEVEL_THEMES.find(t => currentLevel <= t.maxLevel);
+            themeEl.textContent = currentTheme ? currentTheme.name : "Más Allá de lo Conocido";
+        }
+
+        function renderQuestion() {
+            updateGameParameters();
+            
+            const decimalEndIndex = currentDecimalIndex + answerLength;
+            
+            // Comprobar si nos hemos quedado sin decimales
+            if (decimalEndIndex > PI_DECIMALS.length) {
+                endGame(true); 
+                return;
+            }
+
+            const correctAnswer = PI_DECIMALS.substring(currentDecimalIndex, decimalEndIndex);
+            const options = generateOptions(correctAnswer, numOptions);
+
+            // Actualizar la interfaz (UI)
+            levelEl.textContent = currentLevel;
+            scoreEl.textContent = currentScore;
+            
+            let prefixText = "3.";
+            if (currentDecimalIndex > 0) {
+                // Mostrar la parte de Pi que ya se ha adivinado
+                prefixText += PI_DECIMALS.substring(0, currentDecimalIndex);
+            }
+            prefixEl.textContent = prefixText;
+            
+            optionsEl.innerHTML = '';
+            feedbackEl.textContent = '';
+            nextButton.style.display = 'none';
+
+            // Crear y añadir los botones
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                // Mostrar la opción (separando los dígitos para mejor visualización si es más de 1)
+                button.textContent = option.length > 1 ? option.match(/.{1,1}/g).join(' ') : option; 
+                button.onclick = () => checkAnswer(button, option, correctAnswer);
+                optionsEl.appendChild(button);
+            });
+        }
+
+        function checkAnswer(button, selectedOption, correctAnswer) {
+            // Deshabilitar todos los botones después de una selección
+            Array.from(optionsEl.children).forEach(btn => btn.disabled = true);
+            
+            if (selectedOption === correctAnswer) {
+                // Respuesta Correcta: ¡Impulso de motor exitoso!
+                button.style.backgroundColor = '#28a745'; // Verde
+                feedbackEl.textContent = "¡Cálculo de Órbita Correcto! 🛰️ ¡Adelante!";
+                feedbackEl.className = 'correct';
+                currentScore += currentLevel * answerLength * 10; // Puntuación progresiva
+                scoreEl.textContent = currentScore;
+                nextButton.style.display = 'block';
+                
+                currentDecimalIndex += answerLength;
+                currentLevel++;
+            } else {
+                // Respuesta Incorrecta: ¡Desviación crítica!
+                button.style.backgroundColor = '#dc3545'; // Rojo
+                feedbackEl.textContent = `¡Desviación Crítica! 💥 La secuencia correcta era: ${correctAnswer}`;
+                feedbackEl.className = 'incorrect';
+                
+                // Marcar la respuesta correcta en amarillo (alerta)
+                Array.from(optionsEl.children).find(btn => btn.textContent.replace(/\s/g, '') === correctAnswer).style.backgroundColor = '#ffc107';
+                
+                endGame(false);
+            }
+        }
+
+        function endGame(win) {
+            optionsEl.innerHTML = '';
+            nextButton.style.display = 'none';
+            
+            const gameOverMessage = document.getElementById('game-over');
+            document.getElementById('final-level').textContent = currentLevel;
+            document.getElementById('final-score').textContent = currentScore;
+
+            if (win) {
+                gameOverMessage.querySelector('h2').textContent = "¡Misión Completa! 🏆 Has mapeado los decimales conocidos.";
+                gameOverEl.style.backgroundColor = '#1c491c'; // Fondo de éxito
+                gameOverEl.querySelector('h2').style.color = '#28a745';
+            } else {
+                gameOverMessage.querySelector('h2').textContent = "¡Colisión con un Cúmulo de Error! 💀";
+            }
+
+            gameOverMessage.style.display = 'block';
+        }
+
+        // Evento para pasar al siguiente nivel
+        nextButton.addEventListener('click', renderQuestion);
+
+        // Iniciar el juego
+        renderQuestion();
+    </script>
+</body>
+</html>
