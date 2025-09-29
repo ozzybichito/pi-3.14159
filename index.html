@@ -85,15 +85,23 @@
             font-size: 1.8rem;
             color: #e9573f; /* Rojo/Naranja para la parte conocida de Pi */
             font-weight: bolder;
-            word-wrap: break-word; 
+            word-wrap: break-word;
             padding: 0.5rem;
             background-color: #0e1820;
             border-radius: 5px;
             margin: 0.5rem 0;
-            /* Flexbox para mantener los dígitos en línea horizontalmente */
-            display: flex;
-            flex-wrap: wrap; 
-            justify-content: center;
+            
+            /* MODIFICACIONES PARA LA VISUALIZACIÓN LONGITUDINAL */
+            display: block; /* Asegura que la alineación y el overflow funcionen */
+            overflow-x: auto; /* Permite el scroll horizontal */
+            white-space: nowrap; /* Mantiene todo en una línea */
+            text-align: right; /* Alinea los dígitos a la derecha (los más nuevos) */
+            max-width: 100%; /* Evita que se desborde del contenedor principal */
+        }
+
+        #pi-prefix .past-digits {
+            opacity: 0.6; /* Atenúa los dígitos más antiguos */
+            font-size: 1.5rem; /* Los hace un poco más pequeños */
         }
 
         /* Opciones de Respuesta (Grid adaptado para móvil) */
@@ -311,6 +319,7 @@
         /* ========================================= */
         
         const PI_DECIMALS = "14159265358979323846264338327950288419716939937510"; // Los primeros 50 decimales
+        const MAX_PREFIX_LENGTH = 20; // Límite MÁXIMO de dígitos de Pi a mostrar en la pantalla.
 
         // Temas para los niveles (para la narrativa)
         const LEVEL_THEMES = [
@@ -323,7 +332,7 @@
         let currentDecimalIndex = 0;
         let currentScore = 0;
         let answerLength = 1; 
-        let numOptions = 2;   
+        let numOptions = 2; 
 
         // Referencias del DOM
         const levelEl = document.getElementById('current-level');
@@ -417,7 +426,7 @@
             
             const decimalEndIndex = currentDecimalIndex + answerLength;
             
-            // Comprobar si nos hemos quedado sin decimales
+            // Comprobar si nos hemos quedado sin decimales (Victoria)
             if (decimalEndIndex > PI_DECIMALS.length) {
                 endGame(true); 
                 return;
@@ -430,12 +439,23 @@
             levelEl.textContent = currentLevel;
             scoreEl.textContent = currentScore;
             
+            // --- CÓDIGO CORREGIDO PARA LIMITAR EL PREFIJO DE PI ---
             let prefixText = "3.";
             if (currentDecimalIndex > 0) {
-                // Mostrar la parte de Pi que ya se ha adivinado
-                prefixText += PI_DECIMALS.substring(0, currentDecimalIndex);
+                let fullPrefix = PI_DECIMALS.substring(0, currentDecimalIndex);
+                
+                // Determinar el punto de inicio para mostrar solo los últimos 20 dígitos
+                let startIndex = Math.max(0, fullPrefix.length - MAX_PREFIX_LENGTH);
+                let visiblePrefix = fullPrefix.substring(startIndex);
+                
+                // Añadir puntos suspensivos si hemos cortado dígitos
+                let ellipsis = (startIndex > 0) ? `<span class="past-digits">...</span>` : "";
+                
+                prefixText += ellipsis + visiblePrefix;
             }
-            prefixEl.textContent = prefixText;
+            
+            prefixEl.innerHTML = prefixText; // Usamos innerHTML para las etiquetas <span>
+            // -----------------------------------------------------------------------
             
             optionsEl.innerHTML = '';
             feedbackEl.textContent = '';
@@ -445,11 +465,14 @@
             options.forEach(option => {
                 const button = document.createElement('button');
                 button.className = 'option-button';
-                // Mostrar la opción (separando los dígitos para mejor visualización si es más de 1)
+                // Separar los dígitos para mejor visualización (e.g., "5 8")
                 button.textContent = option.length > 1 ? option.match(/.{1,1}/g).join(' ') : option; 
                 button.onclick = () => checkAnswer(button, option, correctAnswer);
                 optionsEl.appendChild(button);
             });
+            
+            // Scroll a la derecha para ver los dígitos más nuevos
+            prefixEl.scrollLeft = prefixEl.scrollWidth;
         }
 
         function checkAnswer(button, selectedOption, correctAnswer) {
@@ -497,6 +520,8 @@
                 gameOverEl.querySelector('h2').style.color = '#28a745';
             } else {
                 gameOverMessage.querySelector('h2').textContent = "¡Colisión con un Cúmulo de Error! 💀";
+                gameOverEl.style.backgroundColor = '#491c1c'; // Fondo de fallo
+                gameOverEl.querySelector('h2').style.color = '#dc3545';
             }
 
             gameOverMessage.style.display = 'block';
