@@ -26,23 +26,23 @@
 
         /* Contenedor Principal (Adaptado a móvil) */
         #game-container {
-            position: relative; /* Necesario para posicionar los botones de info/score */
+            position: relative; 
             background-color: #1a2a38; /* Color de panel de control */
             padding: 1.5rem;
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); /* Brillo Sci-Fi */
-            width: 95%; /* Ocupa casi todo el ancho */
-            max-width: 450px; /* Límite para pantallas grandes */
+            width: 95%; 
+            max-width: 450px; 
             text-align: center;
             border: 3px solid #00ffff; /* Borde de energía */
-            box-sizing: border-box; /* Incluir padding y border en el width */
+            box-sizing: border-box; 
         }
 
         h1 {
             color: #00ffff; /* Cian brillante */
             text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
             margin-bottom: 0.5rem;
-            font-size: 2rem; /* Tamaño de fuente relativo */
+            font-size: 2rem; 
         }
         
         p {
@@ -72,7 +72,7 @@
 
         #score-button {
             top: 10px;
-            right: 50px; /* Separación del botón (i) */
+            right: 50px; 
             font-size: 0.9rem;
         }
         
@@ -118,7 +118,7 @@
             border-radius: 5px;
             margin: 0.5rem 0;
             
-            /* MODIFICACIONES PARA LA VISUALIZACIÓN LONGITUDINAL (NO DESBORDE) */
+            /* Controles de desbordamiento */
             display: block; 
             overflow-x: auto; 
             white-space: nowrap; 
@@ -131,7 +131,7 @@
             font-size: 1.5rem;
         }
 
-        /* Opciones de Respuesta (Grid adaptado para móvil) */
+        /* Opciones de Respuesta (Grid adaptado para móvil) - RESTAURADO */
         .options-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
@@ -202,64 +202,7 @@
         }
         
         /* ========================================= */
-        /* Estilos para Modales y Puntuaciones */
-        /* ========================================= */
-        
-        .modal {
-            display: none; 
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.85);
-            padding-top: 2rem;
-        }
-        
-        .modal-content {
-            background-color: #1a2a38;
-            margin: 5% auto; 
-            padding: 20px;
-            border: 3px solid #00ffff;
-            border-radius: 15px;
-            width: 90%; 
-            max-width: 400px; 
-            color: #e6e6ff;
-            text-align: left;
-        }
-
-        .close-button {
-            color: #00ffff;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        
-        .high-scores-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .high-scores-list li {
-            background-color: #0e1820;
-            margin-bottom: 0.5rem;
-            padding: 0.5rem;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            color: #ffc107;
-        }
-
-        .high-scores-list li:first-child {
-            color: #00ffff; 
-            box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-        }
-        
-        /* ========================================= */
-        /* ESTILOS DEL TECLADO VIRTUAL */
+        /* Estilos del Teclado Virtual */
         /* ========================================= */
         #nickname-display {
             width: 100%;
@@ -278,14 +221,14 @@
 
         #virtual-keyboard {
             display: grid;
-            grid-template-columns: repeat(10, 1fr); /* 10 columnas para el teclado alfabético */
+            grid-template-columns: repeat(10, 1fr); 
             gap: 5px;
             padding: 5px;
-            background-color: #0e1820; /* Fondo del teclado */
+            background-color: #0e1820; 
             border-radius: 8px;
             border: 1px solid #334a5d;
             margin-top: 1rem;
-            user-select: none; /* Evita seleccionar el texto del botón */
+            user-select: none; 
         }
         
         .key-button {
@@ -293,7 +236,7 @@
             font-size: 0.9rem;
             border: none;
             border-radius: 5px;
-            background-color: #1a2a38; /* Color base de la tecla */
+            background-color: #1a2a38; 
             color: #e6e6ff;
             cursor: pointer;
             transition: background-color 0.1s;
@@ -314,7 +257,7 @@
 
         .delete-key {
             grid-column: span 3;
-            background-color: #dc3545; /* Tecla de borrar en rojo */
+            background-color: #dc3545; 
         }
 
         .delete-key:hover {
@@ -323,11 +266,11 @@
 
         .shift-key {
              grid-column: span 2;
-             background-color: #007bff; /* Tecla Shift en azul */
+             background-color: #007bff; 
         }
         
         .shift-active {
-            background-color: #00ffff; /* Shift activo en cian */
+            background-color: #00ffff; 
             color: #0d1a26;
             font-weight: bold;
         }
@@ -335,7 +278,7 @@
         #register-score-button {
             padding: 0.75rem 1.5rem;
             font-size: 1rem;
-            background-color: #28a745; /* Botón de registro verde */
+            background-color: #28a745; 
             color: white;
             border: none;
             border-radius: 8px;
@@ -344,6 +287,16 @@
             width: 100%; 
             margin-top: 10px;
         }
+        
+        /* Estilos de Modales (Mantenidos) */
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.85); padding-top: 2rem; }
+        .modal-content { background-color: #1a2a38; margin: 5% auto; padding: 20px; border: 3px solid #00ffff; border-radius: 15px; width: 90%; max-width: 400px; color: #e6e6ff; text-align: left; }
+        .close-button { color: #00ffff; float: right; font-size: 28px; font-weight: bold; }
+        .high-scores-list { list-style: none; padding: 0; }
+        .high-scores-list li { background-color: #0e1820; margin-bottom: 0.5rem; padding: 0.5rem; border-radius: 5px; display: flex; justify-content: space-between; font-weight: bold; color: #ffc107; }
+        .high-scores-list li:first-child { color: #00ffff; box-shadow: 0 0 8px rgba(0, 255, 255, 0.5); }
+
+
     </style>
 </head>
 <body>
@@ -435,333 +388,7 @@
         
         const PI_DECIMALS = "14159265358979323846264338327950288419716939937510"; // Los primeros 50 decimales
         const MAX_PREFIX_LENGTH = 20; 
-        const MAX_NICKNAME_LENGTH = 10; // Límite de 10 caracteres
+        const MAX_NICKNAME_LENGTH = 10; 
         const KEYBOARD_LAYOUT = [
             ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
-            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Delete'],
-            ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '.', ' '], // '.' para caracteres especiales simples, ' ' para espacio
-        ];
-
-        // Temas para los niveles (para la narrativa)
-        const LEVEL_THEMES = [
-            { maxLevel: 10, name: "Sistema Solar" },
-            { maxLevel: 20, name: "Galaxia Local" },
-            { maxLevel: Infinity, name: "El Borde del Cosmos" }
-        ];
-
-        let currentLevel = 1;
-        let currentDecimalIndex = 0;
-        let currentScore = 0;
-        let answerLength = 1; 
-        let numOptions = 2; 
-        let nickname = ""; // Variable para almacenar el nickname
-        let isShifted = true; // Empieza con mayúsculas
-
-        // Referencias del DOM
-        const levelEl = document.getElementById('current-level');
-        const themeEl = document.getElementById('level-theme');
-        const scoreEl = document.getElementById('current-score');
-        const prefixEl = document.getElementById('pi-prefix');
-        const optionsEl = document.getElementById('answer-options');
-        const feedbackEl = document.getElementById('feedback');
-        const nextButton = document.getElementById('next-button');
-        const gameOverEl = document.getElementById('game-container'); // Importante: usar el contenedor principal para centrar
-        const creditsModal = document.getElementById('credits-modal');
-        const highscoresModal = document.getElementById('highscores-modal');
-        const scoresListEl = document.getElementById('high-scores-list');
-        const nicknameFormEl = document.getElementById('nickname-form');
-        const nicknameDisplayEl = document.getElementById('nickname-display');
-        const keyboardEl = document.getElementById('virtual-keyboard');
-        const registerButton = document.getElementById('register-score-button');
-        
-        // --- Funciones de Modal ---
-        
-        function openModal(modalId) {
-             document.getElementById(modalId).style.display = 'block';
-             if (modalId === 'highscores-modal') loadHighScores();
-        }
-        
-        function closeModal(modalId) {
-             document.getElementById(modalId).style.display = 'none';
-        }
-
-        function openScoreModal() {
-            loadHighScores(); 
-            openModal('highscores-modal');
-        }
-
-        // Cierra el modal si el usuario hace clic fuera de él
-        window.onclick = function(event) {
-            if (event.target == creditsModal) {
-                closeModal('credits-modal');
-            }
-            if (event.target == highscoresModal) {
-                closeModal('highscores-modal');
-            }
-        }
-
-        // --- Lógica de Teclado Virtual ---
-
-        function updateNicknameDisplay() {
-            nicknameDisplayEl.textContent = nickname || "___";
-            // Ocultar el botón de reinicio si el formulario está activo
-            document.querySelector('#game-over button[onclick="location.reload()"]').style.display = 'none';
-        }
-
-        function toggleShift() {
-            isShifted = !isShifted;
-            renderKeyboard();
-        }
-
-        function handleKeyPress(key) {
-            if (key === 'Shift') {
-                toggleShift();
-                return;
-            }
-            
-            if (key === 'Delete') {
-                nickname = nickname.slice(0, -1);
-            } else if (nickname.length < MAX_NICKNAME_LENGTH) {
-                if (key === ' ') {
-                    nickname += ' ';
-                } else if (key === '.') {
-                    nickname += '.';
-                } else {
-                    // Si el shift está activo, usar mayúsculas; de lo contrario, minúsculas
-                    nickname += isShifted ? key : key.toLowerCase();
-                    // Desactivar shift después de un carácter si estaba activo
-                    if (isShifted && key.match(/[A-Z]/i)) {
-                        toggleShift();
-                    }
-                }
-            }
-            updateNicknameDisplay();
-        }
-
-        function renderKeyboard() {
-            keyboardEl.innerHTML = '';
-            
-            KEYBOARD_LAYOUT.forEach(row => {
-                row.forEach(key => {
-                    const button = document.createElement('button');
-                    button.className = 'key-button';
-                    button.textContent = key;
-                    button.onclick = () => handleKeyPress(key);
-
-                    if (key === 'Shift') {
-                        button.classList.add('shift-key');
-                        if (isShifted) button.classList.add('shift-active');
-                        button.textContent = isShifted ? 'ABC' : 'abc';
-                    } else if (key === 'Delete') {
-                        button.classList.add('delete-key');
-                        button.textContent = '⌫';
-                    } else if (key === ' ') {
-                        button.classList.add('space-key');
-                        button.textContent = 'Espacio';
-                    } else if (key.match(/[A-Z]/i)) {
-                        // Mostrar la tecla según el estado de Shift
-                        button.textContent = isShifted ? key : key.toLowerCase();
-                    }
-                    
-                    keyboardEl.appendChild(button);
-                });
-            });
-        }
-
-        // --- Lógica de Puntuaciones Altas (High Scores) ---
-        
-        function getHighScores() {
-            const scores = localStorage.getItem('piNavigatorHighScores');
-            return scores ? JSON.parse(scores) : [];
-        }
-
-        function saveHighScores(scores) {
-            localStorage.setItem('piNavigatorHighScores', JSON.stringify(scores));
-        }
-
-        function loadHighScores() {
-            const scores = getHighScores();
-            scoresListEl.innerHTML = ''; 
-
-            if (scores.length === 0) {
-                scoresListEl.innerHTML = '<li style="justify-content:center; color:#e6e6ff; font-weight:normal;">No hay registros de misión aún.</li>';
-                return;
-            }
-
-            scores.slice(0, 5).forEach((entry, index) => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span>${index + 1}. ${entry.name}</span>
-                    <span>${entry.score} pts</span>
-                `;
-                scoresListEl.appendChild(li);
-            });
-        }
-        
-        function isHighScore(newScore) {
-            const scores = getHighScores();
-            // Ordenar para asegurar que los 5 primeros son los más altos
-            scores.sort((a, b) => b.score - a.score);
-            // Si hay menos de 5 puntajes o si el nuevo puntaje es mayor que el 5to más bajo (índice 4)
-            return scores.length < 5 || newScore > scores[4].score;
-        }
-
-        function registerScore() {
-            let finalNickname = nickname.trim().substring(0, MAX_NICKNAME_LENGTH);
-            
-            // Validar que el nickname no sean solo espacios o vacío después de trim
-            if (finalNickname === "") {
-                alert("El Nickname no puede estar vacío. Por favor, ingrese un nombre de piloto.");
-                return;
-            }
-            
-            const newEntry = {
-                name: finalNickname,
-                score: currentScore,
-                level: currentLevel
-            };
-            
-            let scores = getHighScores();
-            scores.push(newEntry);
-            
-            scores.sort((a, b) => b.score - a.score);
-            scores = scores.slice(0, 5);
-            
-            saveHighScores(scores);
-            
-            // Ocultar el formulario y mostrar el botón de reinicio
-            nicknameFormEl.style.display = 'none';
-            document.querySelector('#game-over button[onclick="location.reload()"]').style.display = 'block';
-            
-            // Actualizar el mensaje de Game Over
-            document.querySelector('#game-over p').innerHTML = `
-                Registro de misión completado por ${finalNickname}. <br>
-                Distancia total: ${currentScore} puntos.
-            `;
-            loadHighScores(); 
-        }
-
-
-        // --- Funciones de Juego (renderQuestion, checkAnswer, endGame) ---
-
-        // (Mantener las funciones auxiliares de utilidades (getRandomDigits, generateOptions) y Lógica de Niveles (updateGameParameters) sin cambios)
-        
-        // Abreviatura de las funciones de juego para la concisión del ejemplo, asumiendo que ya funcionan correctamente.
-        function getRandomDigits(length) { /* ... */ return Array(length).fill().map(() => Math.floor(Math.random() * 10)).join(''); }
-        function generateOptions(correctAnswer, totalOptions) { /* ... */ } // Lógica de opciones
-        function updateGameParameters() { /* ... */ } // Lógica de niveles
-
-        function renderQuestion() {
-            updateGameParameters();
-            
-            const decimalEndIndex = currentDecimalIndex + answerLength;
-            
-            if (decimalEndIndex > PI_DECIMALS.length) {
-                endGame(true); 
-                return;
-            }
-
-            const correctAnswer = PI_DECIMALS.substring(currentDecimalIndex, decimalEndIndex);
-            const options = generateOptions(correctAnswer, numOptions);
-
-            levelEl.textContent = currentLevel;
-            scoreEl.textContent = currentScore;
-            
-            // Lógica para limitar la visualización del prefijo de Pi
-            let prefixText = "3.";
-            if (currentDecimalIndex > 0) {
-                let fullPrefix = PI_DECIMALS.substring(0, currentDecimalIndex);
-                let startIndex = Math.max(0, fullPrefix.length - MAX_PREFIX_LENGTH);
-                let visiblePrefix = fullPrefix.substring(startIndex);
-                let ellipsis = (startIndex > 0) ? `<span class="past-digits">...</span>` : "";
-                
-                prefixText += ellipsis + visiblePrefix;
-            }
-            
-            prefixEl.innerHTML = prefixText; 
-            
-            optionsEl.innerHTML = '';
-            feedbackEl.textContent = '';
-            nextButton.style.display = 'none';
-
-            options.forEach(option => {
-                const button = document.createElement('button');
-                button.className = 'option-button';
-                button.textContent = option.length > 1 ? option.match(/.{1,1}/g).join(' ') : option; 
-                button.onclick = () => checkAnswer(button, option, correctAnswer);
-                optionsEl.appendChild(button);
-            });
-            
-            prefixEl.scrollLeft = prefixEl.scrollWidth;
-        }
-
-        function checkAnswer(button, selectedOption, correctAnswer) {
-            Array.from(optionsEl.children).forEach(btn => btn.disabled = true);
-            
-            if (selectedOption === correctAnswer) {
-                button.style.backgroundColor = '#28a745'; 
-                feedbackEl.textContent = "¡Cálculo de Órbita Correcto! 🛰️ ¡Adelante!";
-                feedbackEl.className = 'correct';
-                currentScore += currentLevel * answerLength * 10; 
-                scoreEl.textContent = currentScore;
-                nextButton.style.display = 'block';
-                
-                currentDecimalIndex += answerLength;
-                currentLevel++;
-            } else {
-                button.style.backgroundColor = '#dc3545'; 
-                feedbackEl.textContent = `¡Desviación Crítica! 💥 La secuencia correcta era: ${correctAnswer}`;
-                feedbackEl.className = 'incorrect';
-                
-                const correctBtn = Array.from(optionsEl.children).find(btn => button.textContent.replace(/\s/g, '') === correctAnswer);
-                if (correctBtn) {
-                    correctBtn.style.backgroundColor = '#ffc107';
-                }
-                
-                endGame(false);
-            }
-        }
-
-        function endGame(win) {
-            optionsEl.innerHTML = '';
-            nextButton.style.display = 'none';
-            
-            const gameOverContainer = document.getElementById('game-over');
-            document.getElementById('final-level').textContent = currentLevel;
-            document.getElementById('final-score').textContent = currentScore;
-
-            if (win) {
-                gameOverContainer.querySelector('h2').textContent = "¡Misión Completa! 🏆 Has mapeado los decimales conocidos.";
-                gameOverContainer.style.backgroundColor = '#1c491c'; 
-                gameOverContainer.querySelector('h2').style.color = '#28a745';
-            } else {
-                gameOverContainer.querySelector('h2').textContent = "¡Colisión con un Cúmulo de Error! 💀";
-                gameOverContainer.style.backgroundColor = '#491c1c'; 
-                gameOverContainer.querySelector('h2').style.color = '#dc3545';
-            }
-
-            // Lógica de registro de Puntuación Alta
-            if (currentScore > 0 && isHighScore(currentScore)) {
-                nicknameFormEl.style.display = 'block';
-                document.querySelector('#game-over button[onclick="location.reload()"]').style.display = 'none'; // Ocultar Reiniciar
-                nickname = ""; // Resetear nickname
-                updateNicknameDisplay();
-                renderKeyboard(); // Renderizar el teclado alfanumérico
-            } else {
-                 nicknameFormEl.style.display = 'none';
-                 document.querySelector('#game-over button[onclick="location.reload()"]').style.display = 'block';
-            }
-
-            gameOverContainer.style.display = 'block';
-        }
-
-        // Evento para pasar al siguiente nivel
-        nextButton.addEventListener('click', renderQuestion);
-
-        // Iniciar el juego
-        renderQuestion();
-        loadHighScores(); 
-    </script>
-</body>
-</html>
+            ['Q', 'W', 'E', '
