@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi-Espacial 🌌</title> <style>
+    <title>Pi-Espacial 🌌</title> 
+    
+    <style>
         /* ========================================= */
         /* CSS: Estilo Cósmico y Adaptabilidad Móvil */
         /* ========================================= */
@@ -316,7 +318,7 @@
         }
         
         .space-key { 
-            grid-column: span 2; /* Ocupa 2 columnas */
+            grid-column: span 4; /* Ocupa 4 columnas */
             background-color: #007bff;
         }
         
@@ -357,7 +359,8 @@
 </head>
 <body>
     <div id="game-container">
-        <h1>🚀 Pi-Espacial 🌌</h1> <p>Adivina los decimales del número &pi; para calcular la siguiente órbita.</p>
+        <h1>🚀 Pi-Espacial 🌌</h1>
+        <p>Adivina los decimales del número &pi; para calcular la siguiente órbita.</p>
         
         <button id="score-button" class="top-right-button" onclick="openScoreModal()">🏆</button>
         <button id="info-button" class="top-right-button" onclick="openModal('credits-modal')">(i)</button>
@@ -450,28 +453,20 @@
         const MAX_PREFIX_LENGTH = 20; 
         const MAX_NICKNAME_LENGTH = 10; 
         
-        // TECLADO ESPAÑOL (SOLO MAYÚSCULAS, SIN SHIFT)
+        // TECLADO ESPAÑOL (SOLO MAYÚSCULAS)
         const KEYBOARD_LAYOUT = [
             ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], 
             ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], 
             ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'], 
             ['.', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Space', 'Delete']
         ];
-
-        // Mapeo de vocales para pulsación larga (tilde) - SOLO MAYÚSCULAS
-        const TILDES_MAP = {
-            'A': 'Á', 'E': 'É', 'I': 'Í', 'O': 'Ó', 'U': 'Ú'
-        };
-        const LONG_PRESS_DELAY = 500; 
-
+        
         let currentLevel = 1;
         let currentDecimalIndex = 0;
         let currentScore = 0;
         let answerLength = 1; 
         let numOptions = 2; 
         let nickname = ""; 
-        let pressTimer = null;
-        let currentPressKey = null;
 
         // Referencias del DOM 
         const levelEl = document.getElementById('current-level');
@@ -497,7 +492,79 @@
             { maxLevel: Infinity, name: "El Borde del Cosmos" }
         ];
 
+        // --- LÓGICA DE AUDIO (NUEVA) ---
+        let audioContext;
+
+        function initAudioContext() {
+            if (!audioContext) {
+                // Se intenta inicializar el AudioContext
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
         
+        function playSuccessSound() {
+            initAudioContext();
+            if (!audioContext) return;
+
+            const now = audioContext.currentTime;
+            
+            // Sonido de propulsión/acierto (Simple Beep ascendente)
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.type = 'square'; // Onda cuadrada
+            oscillator.frequency.setValueAtTime(440, now); // Frecuencia inicial (A4)
+            oscillator.frequency.linearRampToValueAtTime(880, now + 0.1); // Rampa ascendente a (A5)
+
+            gainNode.gain.setValueAtTime(0.5, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3); // Fade out
+
+            oscillator.start(now);
+            oscillator.stop(now + 0.3);
+        }
+
+        function playGameOverSound() {
+            initAudioContext();
+            if (!audioContext) return;
+
+            const now = audioContext.currentTime;
+            
+            // Sonido de fallo/alarma (Disonancia descendente rápida)
+            const oscillator1 = audioContext.createOscillator();
+            const oscillator2 = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator1.connect(gainNode);
+            oscillator2.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator1.type = 'sawtooth';
+            oscillator2.type = 'sawtooth';
+
+            // Frecuencias disonantes para el "alarma"
+            oscillator1.frequency.setValueAtTime(300, now);
+            oscillator2.frequency.setValueAtTime(290, now);
+            
+            // Rampa descendente
+            oscillator1.frequency.linearRampToValueAtTime(100, now + 0.5);
+            oscillator2.frequency.linearRampToValueAtTime(90, now + 0.5);
+
+            gainNode.gain.setValueAtTime(0.5, now);
+            gainNode.gain.linearRampToValueAtTime(0.001, now + 0.5); 
+
+            oscillator1.start(now);
+            oscillator2.start(now);
+            oscillator1.stop(now + 0.5);
+            oscillator2.stop(now + 0.5);
+        }
+        
+        // El AudioContext se inicializa en el primer click (prevención de autoplay)
+        document.addEventListener('click', initAudioContext, { once: true });
+
+
         // --- Funciones de Modal (Mantenidas) ---
         
         function openModal(modalId) {
@@ -522,7 +589,7 @@
             }
         }
 
-        // --- Lógica de Teclado Virtual (REVISADA) ---
+        // --- Lógica de Teclado Virtual (Mantenida) ---
 
         function updateNicknameDisplay() {
             nicknameDisplayEl.textContent = nickname || "___";
@@ -530,7 +597,6 @@
         }
 
         function commitKey(key) {
-            // Lógica de borrado carácter a carácter
             if (key === 'Delete') {
                 nickname = nickname.slice(0, -1);
             } else if (nickname.length < MAX_NICKNAME_LENGTH) {
@@ -539,80 +605,20 @@
                 } else if (key === '.') {
                     nickname += '.';
                 } else {
-                    // Todos los caracteres son agregados como Mayúsculas
                     nickname += key;
                 }
             }
             updateNicknameDisplay();
         }
-
-        // Simulación de pulsación larga para tildes (Ajustada para MAYÚSCULAS)
-        function handleKeyTouchStart(key, button) {
-            currentPressKey = key;
-            if (TILDES_MAP.hasOwnProperty(key)) { 
-                button.classList.add('long-press-active');
-                
-                if (pressTimer) {
-                     clearTimeout(pressTimer);
-                     pressTimer = null;
-                }
-                
-                pressTimer = setTimeout(() => {
-                    const tildeChar = TILDES_MAP[key];
-                    const lastChar = nickname[nickname.length - 1];
-
-                    if (lastChar === key) {
-                        nickname = nickname.slice(0, -1) + tildeChar;
-                    } else if (nickname.length < MAX_NICKNAME_LENGTH) {
-                        nickname += tildeChar;
-                    }
-
-                    updateNicknameDisplay();
-                    clearTimeout(pressTimer);
-                    pressTimer = null;
-                }, LONG_PRESS_DELAY);
-            }
-        }
-
-        function handleKeyTouchEnd(key, button) {
-             button.classList.remove('long-press-active');
-
-            if (TILDES_MAP.hasOwnProperty(key)) {
-                 if (pressTimer) {
-                    clearTimeout(pressTimer);
-                    pressTimer = null;
-                    commitKey(key); 
-                }
-            } else {
-                commitKey(key);
-            }
-            
-            currentPressKey = null;
-        }
         
         function setupKeyEvents(button, key) {
-            
-            if (!('ontouchstart' in window)) {
-                button.addEventListener('click', () => commitKey(key));
-                return;
-            }
-
-            if (TILDES_MAP.hasOwnProperty(key)) {
-                button.addEventListener('touchstart', () => handleKeyTouchStart(key, button));
-                button.addEventListener('touchend', () => {
-                    button.classList.remove('long-press-active');
+            button.addEventListener('click', () => commitKey(key));
+             if ('ontouchstart' in window) {
+                button.addEventListener('touchend', (e) => {
+                    e.preventDefault(); 
+                    commitKey(key);
                 });
-                button.addEventListener('touchcancel', () => {
-                    button.classList.remove('long-press-active');
-                    if (pressTimer) {
-                        clearTimeout(pressTimer);
-                        pressTimer = null;
-                    }
-                    currentPressKey = null;
-                });
-            } else {
-                button.addEventListener('click', () => commitKey(key));
-            }
+             }
         }
 
 
@@ -622,7 +628,7 @@
             KEYBOARD_LAYOUT.forEach((row, rowIndex) => {
                 row.forEach(key => {
                     const button = document.createElement('button');
-                    button.className = 'key-button standard-key'; // Clase base para todos
+                    button.className = 'key-button standard-key'; 
                     
                     let displayKey = key;
                     
@@ -642,22 +648,18 @@
                 });
             });
             
-            // Re-aplicar clases de span para los botones anchos en la última fila
             const lastRowButtons = keyboardEl.querySelectorAll('.space-key, .delete-key');
             if (lastRowButtons.length === 2) {
-                // Selecciona el botón ESPACIO
                 lastRowButtons[0].style.gridColumn = 'span 4'; 
-                // Selecciona el botón BORRAR
                 lastRowButtons[1].style.gridColumn = 'span 2';
             }
         }
 
 
-        // --- Funciones de Puntuaciones Altas y Juego (Mantenidas) ---
+        // --- Funciones de Puntuaciones Altas y Juego (Modificadas para Sonido) ---
         
         function getHighScores() {
             const scores = localStorage.getItem('piNavigatorHighScores');
-            // Nota: Aquí se mantiene el nombre antiguo de la clave de localStorage por compatibilidad
             return scores ? JSON.parse(scores) : [];
         }
 
@@ -814,6 +816,9 @@
             Array.from(optionsEl.children).forEach(btn => btn.disabled = true);
             
             if (selectedOption === correctAnswer) {
+                // Sonido de éxito
+                playSuccessSound();
+                
                 button.style.backgroundColor = '#28a745'; 
                 feedbackEl.textContent = "¡Cálculo de Órbita Correcto! 🛰️ ¡Adelante!";
                 feedbackEl.className = 'correct';
@@ -824,6 +829,8 @@
                 currentDecimalIndex += answerLength;
                 currentLevel++;
             } else {
+                // No se llama al sonido de fallo aquí, se llama en endGame para evitar doble sonido.
+                
                 button.style.backgroundColor = '#dc3545'; 
                 feedbackEl.textContent = `¡Desviación Crítica! 💥 La secuencia correcta era: ${correctAnswer}`;
                 feedbackEl.className = 'incorrect';
@@ -848,7 +855,11 @@
                 gameOverTitle.textContent = "¡Misión Completa! 🏆 Has mapeado los decimales conocidos.";
                 gameOverModalContent.classList.add('game-over-win');
                 gameOverTitle.style.color = '#28a745';
+                // Si gana, no hay sonido de fallo, pero podrías agregar uno de "victoria" si quisieras.
             } else {
+                // Sonido de fallo/alarma solo si pierde
+                playGameOverSound();
+                
                 gameOverTitle.textContent = "¡Colisión con un Cúmulo de Error! 💀";
                 gameOverModalContent.classList.remove('game-over-win');
                 gameOverTitle.style.color = '#dc3545';
