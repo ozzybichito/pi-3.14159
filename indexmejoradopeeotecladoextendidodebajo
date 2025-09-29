@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi-Navegator 🚀</title>
+    <title>Pi-Espacial 🌌</title> 
     
     <style>
         /* ========================================= */
@@ -114,7 +114,7 @@
             font-weight: bolder;
             word-wrap: break-word;
             padding: 0.5rem;
-            background-color: #0e1820;
+            background-color: #0d1a26; /* Fondo más oscuro para el prefijo */
             border-radius: 5px;
             margin: 0.5rem 0;
             display: block; 
@@ -129,7 +129,7 @@
             font-size: 1.5rem;
         }
 
-        /* Opciones de Respuesta (Grid adaptado para móvil) */
+        /* Opciones de Respuesta (Grid adaptado para móvil - RESTAURADO) */
         .options-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
@@ -189,18 +189,76 @@
             box-sizing: border-box;
         }
 
-        /* Estilo de Game Over */
-        #game-over {
-            padding: 1.5rem;
-            background-color: #491c1c; 
-            border: 1px solid #dc3545;
-            color: #fff;
-            border-radius: 10px;
-            margin-top: 1rem;
+        /* ========================================= */
+        /* Estilos para MODALES (General y Game Over) */
+        /* ========================================= */
+        
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 1001; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.85); 
+            padding-top: 2rem; 
         }
         
+        .modal-content { 
+            background-color: #1a2a38; 
+            margin: 5% auto; 
+            padding: 20px; 
+            border: 3px solid #00ffff; 
+            border-radius: 15px; 
+            width: 90%; 
+            max-width: 400px; 
+            color: #e6e6ff; 
+            text-align: center; 
+        }
+        
+        .close-button { 
+            color: #00ffff; 
+            float: right; 
+            font-size: 28px; 
+            font-weight: bold; 
+        }
+        
+        /* Estilo específico para Game Over Modal */
+        #game-over-modal .modal-content {
+            background-color: #491c1c; 
+            border: 3px solid #dc3545;
+        }
+
+        .game-over-win {
+            background-color: #1c491c !important;
+            border: 3px solid #28a745 !important;
+        }
+        
+        /* Lista de High Scores */
+        .high-scores-list { 
+            list-style: none; 
+            padding: 0; 
+        }
+        .high-scores-list li { 
+            background-color: #0e1820; 
+            margin-bottom: 0.5rem; 
+            padding: 0.5rem; 
+            border-radius: 5px; 
+            display: flex; 
+            justify-content: space-between; 
+            font-weight: bold; 
+            color: #ffc107; 
+            text-align: left;
+        }
+        .high-scores-list li:first-child { 
+            color: #00ffff; 
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.5); 
+        }
+
         /* ========================================= */
-        /* Estilos del Teclado Virtual (NUEVOS) */
+        /* Estilos del Teclado Virtual */
         /* ========================================= */
         #nickname-display {
             width: 100%;
@@ -215,10 +273,12 @@
             border-radius: 5px;
             text-align: center;
             min-height: 1.5rem;
+            box-sizing: border-box; 
         }
 
         #virtual-keyboard {
             display: grid;
+            /* Usamos 10 columnas base para acomodar la mayoría de las filas */
             grid-template-columns: repeat(10, 1fr); 
             gap: 5px;
             padding: 5px;
@@ -237,41 +297,36 @@
             background-color: #1a2a38; 
             color: #e6e6ff;
             cursor: pointer;
-            transition: background-color 0.1s;
-        }
-
-        .key-button:hover {
-            background-color: #334a5d;
+            transition: background-color 0.1s, transform 0.1s;
         }
 
         .key-button:active {
-            background-color: #00ffff;
-            color: #0d1a26;
-        }
-
-        .space-key {
-            grid-column: span 5;
-        }
-
-        .delete-key {
-            grid-column: span 3;
-            background-color: #dc3545; 
-        }
-
-        .delete-key:hover {
-            background-color: #c82333;
-        }
-
-        .shift-key {
-             grid-column: span 2;
-             background-color: #007bff; 
+            transform: scale(0.95);
         }
         
-        .shift-active {
+        .key-button.long-press-active { 
             background-color: #00ffff; 
             color: #0d1a26;
+        }
+
+        /* Estilos específicos para la última fila */
+        .delete-key { 
+            grid-column: span 2; /* Ocupa 2 columnas */
+            background-color: #dc3545; 
+            font-size: 0.8rem;
             font-weight: bold;
         }
+        
+        .space-key { 
+            grid-column: span 4; /* Ocupa 4 columnas */
+            background-color: #007bff;
+        }
+        
+        /* Aseguramos que los caracteres normales ocupen 1 columna */
+        .standard-key {
+            grid-column: span 1;
+        }
+
 
         #register-score-button {
             padding: 0.75rem 1.5rem;
@@ -286,24 +341,29 @@
             margin-top: 10px;
         }
         
-        /* Estilos de Modales (Mantenidos) */
-        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.85); padding-top: 2rem; }
-        .modal-content { background-color: #1a2a38; margin: 5% auto; padding: 20px; border: 3px solid #00ffff; border-radius: 15px; width: 90%; max-width: 400px; color: #e6e6ff; text-align: left; }
-        .close-button { color: #00ffff; float: right; font-size: 28px; font-weight: bold; }
-        .high-scores-list { list-style: none; padding: 0; }
-        .high-scores-list li { background-color: #0e1820; margin-bottom: 0.5rem; padding: 0.5rem; border-radius: 5px; display: flex; justify-content: space-between; font-weight: bold; color: #ffc107; }
-        .high-scores-list li:first-child { color: #00ffff; box-shadow: 0 0 8px rgba(0, 255, 255, 0.5); }
-
+        /* Estilo para el botón de reinicio en el modal */
+        #game-over-modal button[onclick="location.reload()"] {
+             padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            background-color: #ffc107; 
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
 
     </style>
 </head>
 <body>
     <div id="game-container">
-        <h1>🚀 Pi-Navegator 🚀</h1>
+        <h1>🚀 Pi-Espacial 🌌</h1>
         <p>Adivina los decimales del número &pi; para calcular la siguiente órbita.</p>
         
         <button id="score-button" class="top-right-button" onclick="openScoreModal()">🏆</button>
-        <button id="info-button" class="top-right-button" onclick="openModal()">(i)</button>
+        <button id="info-button" class="top-right-button" onclick="openModal('credits-modal')">(i)</button>
 
         <div id="status-bar">
             <div id="level-info">
@@ -325,25 +385,10 @@
         <div id="feedback"></div>
         <button id="next-button" style="display:none;">Impulso de Motor (Siguiente Nivel) ▶️</button>
         
-        <div id="game-over" style="display:none;">
-            <h2>¡Misión Fallida! 💀</h2>
-            <p>Tu nave se desvió en el Nivel <span id="final-level"></span>. Distancia total: <span id="final-score"></span> puntos.</p>
-            
-            <div id="nickname-form" style="display:none; margin-top:1rem;">
-                <p>¡Nuevo Récord! Ingresa tu Nickname (Máx. 10 chars):</p>
-                <div id="nickname-display"></div> 
-                
-                <div id="virtual-keyboard"></div>
-                
-                <button id="register-score-button" onclick="registerScore()">Registrar 💾</button>
-            </div>
-            
-            <button onclick="location.reload()">Reiniciar Navegación 🔄</button>
-        </div>
     </div>
 
     <div id="credits-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="text-align: left;">
             <span class="close-button" onclick="closeModal('credits-modal')">&times;</span>
             <h2 style="color: #00ffff; text-align: center;">Centro de Comando 🛰️</h2>
             <hr style="border-color: #334a5d; margin-bottom: 1rem;">
@@ -365,7 +410,7 @@
                 3.14...
             </div>
             <p style="margin-top: 0.5rem; font-size: 0.8rem;">
-                (La longitud de esta ruta es de 50 decimales).
+                (La longitud de esta ruta es de 734 decimales).
             </p>
         </div>
     </div>
@@ -380,38 +425,51 @@
                 </ul>
         </div>
     </div>
+    
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-game-over-title">¡Misión Fallida! 💀</h2>
+            <p>Tu nave se desvió en el Nivel <span id="final-level"></span>. Distancia total: <span id="final-score"></span> puntos.</p>
+            
+            <div id="nickname-form" style="display:none; margin-top:1rem;">
+                <p>¡Nuevo Récord! Ingresa tu Nickname (Máx. 10 caracteres):</p>
+                <div id="nickname-display"></div> 
+                
+                <div id="virtual-keyboard"></div>
+                
+                <button id="register-score-button" onclick="registerScore()">Registrar 💾</button>
+            </div>
+            
+            <button onclick="location.reload()">Reiniciar Navegación 🔄</button>
+        </div>
+    </div>
 
     <script>
         /* ========================================= */
-        /* JAVASCRIPT: Lógica del Pi-Navegator */
+        /* JAVASCRIPT: Lógica del Pi-Espacial */
         /* ========================================= */
         
-        const PI_DECIMALS = "14159265358979323846264338327950288419716939937510"; // Los primeros 50 decimales
-        const MAX_PREFIX_LENGTH = 20; 
+        // ¡NUEVA CONSTANTE CON 734 DECIMALES!
+        const PI_DECIMALS = "14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196442881097566593344612847564823378678316527120190914564856692346034861045432664821339360726024914127372458700660631558817488152092096282925409171536436789259036001133053054882046652138414695194151160943305727036575959195309218611738193261179310511854807446237996274956735188575272489122793818301194912983367336244065664308602139494639522473719070217986094370277053921717629317675238467481846766940513200056812714526356082778577134275778960917363717872146844090122495343014654958537105079227968925892354201995611212902196086403441815981362977477130996051870721134999999837297804995105973173281609631859502445945534690830264252230825334468503526193118817101000313783875288658753320838142061717766914730359825349042875546873115956286388235378759375195778185778053217122680661300192787661119590921642019893809525720106548586327886593615338182796823030195203530185296899577362259941389124972177528347913151557485724245415069595082953311686172785588907509838175463746493931925506040092770167113900984882401285836160356370766010471018194295559619894676783744944825537977472684710404753464620804668425906949129331367702898915210475216205696602405803815019351125338243003558764024749647326391419927260426992279678235478163600934172164121992458631503028618297455570674983850549458858692699569092721079750930295532116534498720275596023648066549911988183479775356636980742654252786255181841757467289097777279380008164706001614524919217321721477235014144197356854816136115735255213347574184946843852332390739414333454776241686251898356477138725068415505202888631245700776915611909562141334802804533052134549247728346146051939109782806996887968500661642647734138947206305611802901237719926";
+        const MAX_PREFIX_LENGTH = 30; // Aumentamos para mejor visualización del prefijo largo
         const MAX_NICKNAME_LENGTH = 10; 
+        
+        // TECLADO ESPAÑOL (SOLO MAYÚSCULAS)
         const KEYBOARD_LAYOUT = [
-            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
-            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Delete'],
-            ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '.', ' '], 
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], 
+            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], 
+            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'], 
+            ['.', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Space', 'Delete']
         ];
-
-        // Temas para los niveles (para la narrativa)
-        const LEVEL_THEMES = [
-            { maxLevel: 10, name: "Sistema Solar" },
-            { maxLevel: 20, name: "Galaxia Local" },
-            { maxLevel: Infinity, name: "El Borde del Cosmos" }
-        ];
-
+        
         let currentLevel = 1;
         let currentDecimalIndex = 0;
         let currentScore = 0;
         let answerLength = 1; 
         let numOptions = 2; 
-        let nickname = ""; // Variable para almacenar el nickname
-        let isShifted = true; // Empieza con mayúsculas
+        let nickname = ""; 
 
-        // Referencias del DOM
+        // Referencias del DOM 
         const levelEl = document.getElementById('current-level');
         const themeEl = document.getElementById('level-theme');
         const scoreEl = document.getElementById('current-score');
@@ -419,21 +477,96 @@
         const optionsEl = document.getElementById('answer-options');
         const feedbackEl = document.getElementById('feedback');
         const nextButton = document.getElementById('next-button');
-        const gameOverEl = document.getElementById('game-over');
-        const creditsModal = document.getElementById('credits-modal');
-        const highscoresModal = document.getElementById('highscores-modal');
-        const scoresListEl = document.getElementById('high-scores-list');
+        
+        const gameOverModal = document.getElementById('game-over-modal');
+        const gameOverModalContent = gameOverModal.querySelector('.modal-content');
+        const gameOverTitle = document.getElementById('modal-game-over-title');
         const nicknameFormEl = document.getElementById('nickname-form');
-        const nicknameDisplayEl = document.getElementById('nickname-display'); // NUEVA REFERENCIA
-        const keyboardEl = document.getElementById('virtual-keyboard'); // NUEVA REFERENCIA
+        const nicknameDisplayEl = document.getElementById('nickname-display');
+        const keyboardEl = document.getElementById('virtual-keyboard');
+        const registerButton = document.getElementById('register-score-button');
+        const restartButton = gameOverModal.querySelector('button[onclick="location.reload()"]');
+
+        const LEVEL_THEMES = [
+            { maxLevel: 10, name: "Sistema Solar" },
+            { maxLevel: 50, name: "Galaxia Local" }, // Ajustado para un juego más largo
+            { maxLevel: 100, name: "El Borde del Cosmos" },
+            { maxLevel: Infinity, name: "Región del Gran Atractor" }
+        ];
+
+        // --- LÓGICA DE AUDIO (MANTENIDA) ---
+        let audioContext;
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
         
-        // --- Funciones de Modal ---
+        function playSuccessSound() {
+            initAudioContext();
+            if (!audioContext) return;
+
+            const now = audioContext.currentTime;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.type = 'square'; 
+            oscillator.frequency.setValueAtTime(440, now); 
+            oscillator.frequency.linearRampToValueAtTime(880, now + 0.1); 
+
+            gainNode.gain.setValueAtTime(0.5, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3); 
+
+            oscillator.start(now);
+            oscillator.stop(now + 0.3);
+        }
+
+        function playGameOverSound() {
+            initAudioContext();
+            if (!audioContext) return;
+
+            const now = audioContext.currentTime;
+            const oscillator1 = audioContext.createOscillator();
+            const oscillator2 = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator1.connect(gainNode);
+            oscillator2.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator1.type = 'sawtooth';
+            oscillator2.type = 'sawtooth';
+
+            oscillator1.frequency.setValueAtTime(300, now);
+            oscillator2.frequency.setValueAtTime(290, now);
+            
+            oscillator1.frequency.linearRampToValueAtTime(100, now + 0.5);
+            oscillator2.frequency.linearRampToValueAtTime(90, now + 0.5);
+
+            gainNode.gain.setValueAtTime(0.5, now);
+            gainNode.gain.linearRampToValueAtTime(0.001, now + 0.5); 
+
+            oscillator1.start(now);
+            oscillator2.start(now);
+            oscillator1.stop(now + 0.5);
+            oscillator2.stop(now + 0.5);
+        }
         
-        function openModal(modalId = 'credits-modal') {
+        // El AudioContext se inicializa en el primer click (prevención de autoplay)
+        document.addEventListener('click', initAudioContext, { once: true });
+
+
+        // --- Funciones de Modal (Mantenidas) ---
+        
+        function openModal(modalId) {
              document.getElementById(modalId).style.display = 'block';
         }
         
-        function closeModal(modalId = 'credits-modal') {
+        function closeModal(modalId) {
              document.getElementById(modalId).style.display = 'none';
         }
 
@@ -442,87 +575,83 @@
             openModal('highscores-modal');
         }
 
-        // Cierra el modal si el usuario hace clic fuera de él
         window.onclick = function(event) {
-            if (event.target == creditsModal) {
+            if (event.target === document.getElementById('credits-modal')) {
                 closeModal('credits-modal');
             }
-            if (event.target == highscoresModal) {
+            if (event.target === document.getElementById('highscores-modal')) {
                 closeModal('highscores-modal');
             }
         }
 
-        // --- Lógica de Teclado Virtual (NUEVO) ---
+        // --- Lógica de Teclado Virtual (Mantenida) ---
 
         function updateNicknameDisplay() {
             nicknameDisplayEl.textContent = nickname || "___";
-            // Asegura que el botón de registro esté visible si el formulario está
-            document.getElementById('register-score-button').style.display = 'block';
+            registerButton.style.display = 'block';
         }
 
-        function toggleShift() {
-            isShifted = !isShifted;
-            renderKeyboard();
-        }
-
-        function handleKeyPress(key) {
-            if (key === 'Shift') {
-                toggleShift();
-                return;
-            }
-            
+        function commitKey(key) {
             if (key === 'Delete') {
                 nickname = nickname.slice(0, -1);
             } else if (nickname.length < MAX_NICKNAME_LENGTH) {
-                if (key === ' ') {
+                if (key === 'Space') {
                     nickname += ' ';
                 } else if (key === '.') {
                     nickname += '.';
                 } else {
-                    // Usar mayúsculas o minúsculas según el estado de Shift
-                    nickname += isShifted ? key : key.toLowerCase();
-                    // Desactivar shift después de un carácter si era alfabético
-                    if (isShifted && key.match(/[A-Z]/i)) {
-                        toggleShift();
-                    }
+                    nickname += key;
                 }
             }
             updateNicknameDisplay();
         }
+        
+        function setupKeyEvents(button, key) {
+            button.addEventListener('click', () => commitKey(key));
+             if ('ontouchstart' in window) {
+                button.addEventListener('touchend', (e) => {
+                    e.preventDefault(); 
+                    commitKey(key);
+                });
+             }
+        }
+
 
         function renderKeyboard() {
             keyboardEl.innerHTML = '';
             
-            KEYBOARD_LAYOUT.forEach(row => {
+            KEYBOARD_LAYOUT.forEach((row, rowIndex) => {
                 row.forEach(key => {
                     const button = document.createElement('button');
-                    button.className = 'key-button';
-                    button.onclick = () => handleKeyPress(key);
-
-                    if (key === 'Shift') {
-                        button.classList.add('shift-key');
-                        if (isShifted) button.classList.add('shift-active');
-                        button.textContent = isShifted ? 'ABC' : 'abc';
-                    } else if (key === 'Delete') {
-                        button.classList.add('delete-key');
-                        button.textContent = '⌫';
-                    } else if (key === ' ') {
+                    button.className = 'key-button standard-key'; 
+                    
+                    let displayKey = key;
+                    
+                    if (key === 'Space') {
+                        displayKey = 'ESPACIO';
                         button.classList.add('space-key');
-                        button.textContent = 'Espacio';
-                    } else if (key.match(/[A-Z]/i)) {
-                        // Mostrar la tecla según el estado de Shift
-                        button.textContent = isShifted ? key : key.toLowerCase();
-                    } else {
-                         button.textContent = key;
+                    } else if (key === 'Delete') {
+                        displayKey = '⌫ BORRAR';
+                        button.classList.add('delete-key');
                     }
+                    
+                    button.textContent = displayKey;
+                    
+                    setupKeyEvents(button, key);
                     
                     keyboardEl.appendChild(button);
                 });
             });
+            
+            const lastRowButtons = keyboardEl.querySelectorAll('.space-key, .delete-key');
+            if (lastRowButtons.length === 2) {
+                lastRowButtons[0].style.gridColumn = 'span 4'; 
+                lastRowButtons[1].style.gridColumn = 'span 2';
+            }
         }
 
 
-        // --- Lógica de Puntuaciones Altas (High Scores) ---
+        // --- Funciones de Puntuaciones Altas y Juego (Mantenidas) ---
         
         function getHighScores() {
             const scores = localStorage.getItem('piNavigatorHighScores');
@@ -535,6 +664,7 @@
 
         function loadHighScores() {
             const scores = getHighScores();
+            const scoresListEl = document.getElementById('high-scores-list');
             scoresListEl.innerHTML = ''; 
 
             if (scores.length === 0) {
@@ -555,7 +685,7 @@
         function isHighScore(newScore) {
             const scores = getHighScores();
             scores.sort((a, b) => b.score - a.score);
-            return scores.length < 5 || newScore > scores[4].score;
+            return scores.length < 5 || newScore > (scores.length > 0 ? scores[scores.length - 1].score : -1);
         }
 
         function registerScore() {
@@ -580,20 +710,15 @@
             
             saveHighScores(scores);
             
-            // Ocultar formulario y teclado, mostrar botón de reinicio
             nicknameFormEl.style.display = 'none';
-            gameOverEl.querySelector('button[onclick="location.reload()"]').style.display = 'block';
+            restartButton.style.display = 'block';
             
-            // Actualizar el mensaje de Game Over
-            gameOverEl.querySelector('p').innerHTML = `
+            gameOverModal.querySelector('p').innerHTML = `
                 Registro de misión completado por <strong>${finalNickname}</strong>. <br>
                 Distancia total: ${currentScore} puntos.
             `;
             loadHighScores(); 
         }
-
-
-        // --- Funciones de Juego (Mantenidas) ---
 
         function getRandomDigits(length) { 
             let result = '';
@@ -625,13 +750,16 @@
         }
         
         function updateGameParameters() {
+             // Mantenemos la dificultad progresiva
              if (currentLevel <= 10) { answerLength = 1; } 
-             else if (currentLevel <= 20) { answerLength = 2; } 
-             else { answerLength = 3; }
+             else if (currentLevel <= 30) { answerLength = 2; } // Nivel 11-30: 2 dígitos
+             else if (currentLevel <= 50) { answerLength = 3; } // Nivel 31-50: 3 dígitos
+             else { answerLength = 4; } // Nivel 51+: 4 dígitos (¡Máxima dificultad!)
 
+             // Progresión de opciones
              if (currentLevel <= 3) { numOptions = 2; } 
              else if (currentLevel <= 6) { numOptions = 3; } 
-             else if (currentLevel <= 9) { numOptions = 4; } 
+             else if (currentLevel <= 10) { numOptions = 4; } 
              else { numOptions = 5; }
 
             const currentTheme = LEVEL_THEMES.find(t => currentLevel <= t.maxLevel);
@@ -639,12 +767,13 @@
         }
 
         function renderQuestion() {
-            gameOverEl.style.display = 'none'; // Asegura que se oculte al iniciar/continuar
+            closeModal('game-over-modal');
             
             updateGameParameters();
             
             const decimalEndIndex = currentDecimalIndex + answerLength;
             
+            // ¡Condición de victoria basada en el nuevo PI_DECIMALS.length!
             if (decimalEndIndex > PI_DECIMALS.length) {
                 endGame(true); 
                 return;
@@ -656,7 +785,6 @@
             levelEl.textContent = currentLevel;
             scoreEl.textContent = currentScore;
             
-            // Lógica para el prefijo de Pi
             let prefixText = "3.";
             if (currentDecimalIndex > 0) {
                 let fullPrefix = PI_DECIMALS.substring(0, currentDecimalIndex);
@@ -668,14 +796,14 @@
             }
             prefixEl.innerHTML = prefixText; 
             
-            optionsEl.innerHTML = '';
+            optionsEl.innerHTML = ''; 
             feedbackEl.textContent = '';
             nextButton.style.display = 'none';
 
-            // GENERACIÓN DE BOTONES DE ALTERNATIVA (JUGABILIDAD PRINCIPAL)
             options.forEach(option => {
                 const button = document.createElement('button');
                 button.className = 'option-button';
+                // Separamos los dígitos con un espacio si son más de 1 para mejor lectura
                 button.textContent = option.length > 1 ? option.match(/.{1,1}/g).join(' ') : option; 
                 button.onclick = () => checkAnswer(button, option, correctAnswer);
                 optionsEl.appendChild(button);
@@ -688,6 +816,9 @@
             Array.from(optionsEl.children).forEach(btn => btn.disabled = true);
             
             if (selectedOption === correctAnswer) {
+                // Sonido de éxito
+                playSuccessSound();
+                
                 button.style.backgroundColor = '#28a745'; 
                 feedbackEl.textContent = "¡Cálculo de Órbita Correcto! 🛰️ ¡Adelante!";
                 feedbackEl.className = 'correct';
@@ -719,29 +850,31 @@
             document.getElementById('final-score').textContent = currentScore;
 
             if (win) {
-                gameOverEl.querySelector('h2').textContent = "¡Misión Completa! 🏆 Has mapeado los decimales conocidos.";
-                gameOverEl.style.backgroundColor = '#1c491c'; 
-                gameOverEl.querySelector('h2').style.color = '#28a745';
+                gameOverTitle.textContent = "¡Misión Completa! 🏆 Has mapeado la ruta estelar completa.";
+                gameOverModalContent.classList.add('game-over-win');
+                gameOverTitle.style.color = '#28a745';
             } else {
-                gameOverEl.querySelector('h2').textContent = "¡Colisión con un Cúmulo de Error! 💀";
-                gameOverEl.style.backgroundColor = '#491c1c'; 
-                gameOverEl.querySelector('h2').style.color = '#dc3545';
+                // Sonido de fallo/alarma solo si pierde
+                playGameOverSound();
+                
+                gameOverTitle.textContent = "¡Colisión con un Cúmulo de Error! 💀";
+                gameOverModalContent.classList.remove('game-over-win');
+                gameOverTitle.style.color = '#dc3545';
             }
-
-            // Lógica de registro de Puntuación Alta: Muestra el formulario con el teclado virtual
+            
             if (currentScore > 0 && isHighScore(currentScore)) {
                 nicknameFormEl.style.display = 'block';
-                gameOverEl.querySelector('button[onclick="location.reload()"]').style.display = 'none'; 
+                restartButton.style.display = 'none'; 
                 
-                nickname = ""; // Resetear nickname
+                nickname = "";
                 updateNicknameDisplay();
-                renderKeyboard(); // Renderiza el teclado Sci-Fi
+                renderKeyboard();
             } else {
                  nicknameFormEl.style.display = 'none';
-                 gameOverEl.querySelector('button[onclick="location.reload()"]').style.display = 'block';
+                 restartButton.style.display = 'block';
             }
 
-            gameOverEl.style.display = 'block';
+            openModal('game-over-modal'); 
         }
 
         // Evento para pasar al siguiente nivel
