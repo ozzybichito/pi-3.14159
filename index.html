@@ -258,7 +258,7 @@
         }
 
         /* ========================================= */
-        /* Estilos del Teclado Virtual (Actualizado para 11 columnas) */
+        /* Estilos del Teclado Virtual */
         /* ========================================= */
         #nickname-display {
             width: 100%;
@@ -278,7 +278,8 @@
 
         #virtual-keyboard {
             display: grid;
-            grid-template-columns: repeat(11, 1fr); 
+            /* 10 columnas en la última fila para acomodar los 8 caracteres, el espacio y borrar */
+            grid-template-columns: repeat(10, 1fr); 
             gap: 5px;
             padding: 5px;
             background-color: #0e1820; 
@@ -308,24 +309,26 @@
             color: #0d1a26;
         }
 
+        /* El botón de borrar necesita más espacio y está en la última fila */
         .delete-key { 
             grid-column: span 2;
             background-color: #dc3545; 
+            font-size: 0.8rem;
+            font-weight: bold;
         }
         
-        /* Ajustes de distribución para la última fila */
+        /* El botón de espacio necesita más espacio y está en la última fila */
         .space-key { 
-            grid-column: span 6; 
+            grid-column: span 2; 
             background-color: #007bff;
         }
-        .shift-key { 
-            grid-column: span 2; 
-        }
-        .shift-active { 
-            background-color: #00ffff; 
-            color: #0d1a26; 
-            font-weight: bold; 
-        }
+        
+        /* Las teclas de la primera y segunda fila ocupan 10 columnas de 1fr */
+        .row1-key { grid-column: span 1; }
+        .row2-key { grid-column: span 1; }
+        .row3-key { grid-column: span 1; }
+        .row4-key { grid-column: span 1; }
+
 
         #register-score-button {
             padding: 0.75rem 1.5rem;
@@ -450,22 +453,25 @@
         
         const PI_DECIMALS = "14159265358979323846264338327950288419716939937510"; 
         const MAX_PREFIX_LENGTH = 20; 
-        const MAX_NICKNAME_LENGTH = 10; // LONGITUD VUELTA A 10
+        const MAX_NICKNAME_LENGTH = 10; 
         
-        // TECLADO ESPAÑOL CON Ñ
+        // TECLADO ESPAÑOL (SOLO MAYÚSCULAS, SIN SHIFT)
         const KEYBOARD_LAYOUT = [
-            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.'],
-            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Delete'],
-            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ', 'Shift'],
-            ['Space', 'Z', 'X', 'C', 'V', 'B', 'N', 'M'],
+            /* 10 teclas: 1-0, . */
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], 
+            /* 10 teclas: Q-P, Delete */
+            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], 
+            /* 10 teclas: A-Ñ, Delete */
+            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'], 
+            /* Última fila: Espacio (2), Z-M (7), Borrar (1) */
+            ['.', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Space', 'Delete']
         ];
 
-        // Mapeo de vocales para pulsación larga (tilde)
+        // Mapeo de vocales para pulsación larga (tilde) - SOLO MAYÚSCULAS
         const TILDES_MAP = {
-            'A': 'Á', 'E': 'É', 'I': 'Í', 'O': 'Ó', 'U': 'Ú',
-            'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú'
+            'A': 'Á', 'E': 'É', 'I': 'Í', 'O': 'Ó', 'U': 'Ú'
         };
-        const LONG_PRESS_DELAY = 500; // 500ms para considerar pulsación larga
+        const LONG_PRESS_DELAY = 500; 
 
         let currentLevel = 1;
         let currentDecimalIndex = 0;
@@ -473,11 +479,10 @@
         let answerLength = 1; 
         let numOptions = 2; 
         let nickname = ""; 
-        let isShifted = true; 
         let pressTimer = null;
         let currentPressKey = null;
 
-        // Referencias del DOM
+        // Referencias del DOM (Mantenidas)
         const levelEl = document.getElementById('current-level');
         const themeEl = document.getElementById('level-theme');
         const scoreEl = document.getElementById('current-score');
@@ -502,7 +507,7 @@
         ];
 
         
-        // --- Funciones de Modal ---
+        // --- Funciones de Modal (Mantenidas) ---
         
         function openModal(modalId) {
              document.getElementById(modalId).style.display = 'block';
@@ -518,7 +523,6 @@
         }
 
         window.onclick = function(event) {
-            // Cierre normal de modales (Info y Scores)
             if (event.target === document.getElementById('credits-modal')) {
                 closeModal('credits-modal');
             }
@@ -527,24 +531,15 @@
             }
         }
 
-        // --- Lógica de Teclado Virtual ---
+        // --- Lógica de Teclado Virtual (Actualizada) ---
 
         function updateNicknameDisplay() {
             nicknameDisplayEl.textContent = nickname || "___";
             registerButton.style.display = 'block';
         }
 
-        function toggleShift() {
-            isShifted = !isShifted;
-            renderKeyboard();
-        }
-
         function commitKey(key) {
-            if (key === 'Shift') {
-                toggleShift();
-                return;
-            }
-            
+            // Lógica de borrado carácter a carácter
             if (key === 'Delete') {
                 nickname = nickname.slice(0, -1);
             } else if (nickname.length < MAX_NICKNAME_LENGTH) {
@@ -553,48 +548,35 @@
                 } else if (key === '.') {
                     nickname += '.';
                 } else {
-                    let char = key;
-                    
-                    // Solo aplicar mayúsculas/minúsculas a letras (incluyendo Ñ)
-                    if (key.match(/[A-ZÑ]/i)) {
-                        char = isShifted ? key : key.toLowerCase();
-                    }
-
-                    nickname += char;
-                    
-                    // Desactivar shift después de un carácter si era alfabético
-                    if (isShifted && key.match(/[A-ZÑ]/i)) {
-                        toggleShift();
-                    }
+                    // Todos los caracteres son agregados como Mayúsculas
+                    nickname += key;
                 }
             }
             updateNicknameDisplay();
         }
 
-        // Simulación de pulsación larga para tildes
+        // Simulación de pulsación larga para tildes (Ajustada para MAYÚSCULAS)
         function handleKeyTouchStart(key, button) {
             currentPressKey = key;
-            // Solo aplicar lógica de tilde a las vocales
-            if (key.match(/[AEIOU]/i)) {
+            // Solo aplicar lógica de tilde a las vocales mayúsculas
+            if (TILDES_MAP.hasOwnProperty(key)) { 
                 button.classList.add('long-press-active');
                 
-                // Limpiamos cualquier temporizador anterior
                 if (pressTimer) {
                      clearTimeout(pressTimer);
                      pressTimer = null;
                 }
                 
                 pressTimer = setTimeout(() => {
-                    const tildeChar = TILDES_MAP[isShifted ? key : key.toLowerCase()];
+                    const tildeChar = TILDES_MAP[key];
                     
-                    // Si el nickname termina en vocal sin tilde, la reemplazamos
                     const lastChar = nickname[nickname.length - 1];
-                    const baseVocal = isShifted ? key : key.toLowerCase();
 
-                    if (lastChar === baseVocal) {
+                    // Reemplaza la última vocal sin tilde si es la misma
+                    if (lastChar === key) {
                         nickname = nickname.slice(0, -1) + tildeChar;
                     } else if (nickname.length < MAX_NICKNAME_LENGTH) {
-                        // Si no, la agregamos
+                        // Si no, la agrega
                         nickname += tildeChar;
                     }
 
@@ -608,16 +590,15 @@
         function handleKeyTouchEnd(key, button) {
              button.classList.remove('long-press-active');
 
-            if (key.match(/[AEIOU]/i)) {
+            if (TILDES_MAP.hasOwnProperty(key)) {
                  if (pressTimer) {
-                    // Si el temporizador no expiró, significa que fue un toque corto (pulsación normal)
+                    // Si el temporizador no expiró, es un toque corto (vocal sin tilde)
                     clearTimeout(pressTimer);
                     pressTimer = null;
                     commitKey(key); 
                 }
-                // Si pressTimer expiró, el tilde ya se añadió, no hacemos nada.
             } else {
-                // Para no vocales, simplemente cometemos el carácter (esto cubre click en desktop)
+                // Para no vocales (números, Ñ, espacio, punto, borrar)
                 commitKey(key);
             }
             
@@ -626,20 +607,17 @@
         
         function setupKeyEvents(button, key) {
             
-            // Para dispositivos no táctiles (mouse/click)
             if (!('ontouchstart' in window)) {
-                // En desktop, click siempre es pulsación simple, sin tilde.
+                // En desktop, click es pulsación simple
                 button.addEventListener('click', () => commitKey(key));
                 return;
             }
 
-            // Para dispositivos táctiles (touch)
-            if (key.match(/[AEIOU]/i)) {
-                // Para vocales (manejo de tilde)
+            // Si es una vocal, activamos la lógica de pulsación larga
+            if (TILDES_MAP.hasOwnProperty(key)) {
                 button.addEventListener('touchstart', () => handleKeyTouchStart(key, button));
                 button.addEventListener('touchend', () => {
                     button.classList.remove('long-press-active');
-                    // touchEnd ya se encarga de llamar a commitKey si pressTimer es válido (toque corto)
                 });
                 button.addEventListener('touchcancel', () => {
                     button.classList.remove('long-press-active');
@@ -650,7 +628,7 @@
                     currentPressKey = null;
                 });
             } else {
-                // Para no vocales (pulsación simple)
+                // Si no es vocal, es pulsación simple
                 button.addEventListener('click', () => commitKey(key));
             }
         }
@@ -665,33 +643,49 @@
                     button.className = 'key-button';
                     
                     let displayKey = key;
-                    if (key.match(/[A-ZÑ]/i)) {
-                        displayKey = isShifted ? key : key.toLowerCase();
-                    } else if (key === 'Space') {
-                        displayKey = 'Espacio';
+                    if (key === 'Space') {
+                        displayKey = 'ESPACIO';
                         button.classList.add('space-key');
                     } else if (key === 'Delete') {
-                        displayKey = '⌫';
+                        displayKey = '⌫ BORRAR';
                         button.classList.add('delete-key');
-                    } else if (key === 'Shift') {
-                        displayKey = isShifted ? 'ABC' : 'abc';
-                        button.classList.add('shift-key');
-                        if (isShifted) button.classList.add('shift-active');
                     }
                     
+                    // Clases para la distribución en 10 columnas
+                    if (rowIndex < 3) {
+                         button.classList.add('row1-key');
+                    } else if (rowIndex === 3) {
+                         button.classList.add('row4-key');
+                    }
+
+
                     button.textContent = displayKey;
                     
-                    // Configuramos los eventos de toque y click
                     setupKeyEvents(button, key);
                     
                     keyboardEl.appendChild(button);
                 });
             });
             
-            // HACK: Ajustar el span de la tecla Space si es necesario (el CSS ya lo maneja bien con .space-key)
+            // Re-aplicar clases de span para los botones anchos en la última fila
+            const keys = keyboardEl.querySelectorAll('.row4-key');
+            if (keys.length > 0) {
+                 // ESPACIO (penúltima) ocupa 2 columnas
+                keys[keys.length - 2].classList.add('space-key');
+                // BORRAR (última) ocupa 2 columnas
+                keys[keys.length - 1].classList.add('delete-key');
+                
+                // Los 8 botones de caracteres Z-M y '.' deben ocupar 1 columna cada uno
+                for (let i = 0; i < keys.length - 2; i++) {
+                     keys[i].style.gridColumn = 'span 1';
+                }
+                 // Ajuste para que el último row tenga 10 columnas
+                 keys[keys.length - 2].style.gridColumn = 'span 2';
+                 keys[keys.length - 1].style.gridColumn = 'span 2';
+            }
         }
 
-        // --- Lógica de Puntuaciones Altas (Mantenida) ---
+        // --- Funciones de Puntuaciones Altas y Juego (Mantenidas) ---
         
         function getHighScores() {
             const scores = localStorage.getItem('piNavigatorHighScores');
@@ -746,175 +740,4 @@
             scores.push(newEntry);
             
             scores.sort((a, b) => b.score - a.score);
-            scores = scores.slice(0, 5);
-            
-            saveHighScores(scores);
-            
-            nicknameFormEl.style.display = 'none';
-            restartButton.style.display = 'block';
-            
-            gameOverModal.querySelector('p').innerHTML = `
-                Registro de misión completado por <strong>${finalNickname}</strong>. <br>
-                Distancia total: ${currentScore} puntos.
-            `;
-            loadHighScores(); 
-        }
-
-
-        // --- Funciones de Juego (Mantenidas) ---
-
-        function getRandomDigits(length) { 
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += Math.floor(Math.random() * 10);
-            }
-            return result;
-        }
-
-        function generateOptions(correctAnswer, totalOptions) {
-            let options = new Set();
-            options.add(correctAnswer);
-            const length = correctAnswer.length;
-            
-            while (options.size < totalOptions) {
-                let randomOption = getRandomDigits(length);
-                if (randomOption !== correctAnswer) {
-                    options.add(randomOption);
-                }
-            }
-            
-            let optionsArray = Array.from(options);
-            for (let i = optionsArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [optionsArray[i], optionsArray[j]] = [optionsArray[j], optionsArray[i]];
-            }
-            
-            return optionsArray;
-        }
-        
-        function updateGameParameters() {
-             if (currentLevel <= 10) { answerLength = 1; } 
-             else if (currentLevel <= 20) { answerLength = 2; } 
-             else { answerLength = 3; }
-
-             if (currentLevel <= 3) { numOptions = 2; } 
-             else if (currentLevel <= 6) { numOptions = 3; } 
-             else if (currentLevel <= 9) { numOptions = 4; } 
-             else { numOptions = 5; }
-
-            const currentTheme = LEVEL_THEMES.find(t => currentLevel <= t.maxLevel);
-            themeEl.textContent = currentTheme ? currentTheme.name : "Más Allá de lo Conocido";
-        }
-
-        function renderQuestion() {
-            closeModal('game-over-modal');
-            
-            updateGameParameters();
-            
-            const decimalEndIndex = currentDecimalIndex + answerLength;
-            
-            if (decimalEndIndex > PI_DECIMALS.length) {
-                endGame(true); 
-                return;
-            }
-
-            const correctAnswer = PI_DECIMALS.substring(currentDecimalIndex, decimalEndIndex);
-            const options = generateOptions(correctAnswer, numOptions);
-
-            levelEl.textContent = currentLevel;
-            scoreEl.textContent = currentScore;
-            
-            let prefixText = "3.";
-            if (currentDecimalIndex > 0) {
-                let fullPrefix = PI_DECIMALS.substring(0, currentDecimalIndex);
-                let startIndex = Math.max(0, fullPrefix.length - MAX_PREFIX_LENGTH);
-                let visiblePrefix = fullPrefix.substring(startIndex);
-                let ellipsis = (startIndex > 0) ? `<span class="past-digits">...</span>` : "";
-                
-                prefixText += ellipsis + visiblePrefix;
-            }
-            prefixEl.innerHTML = prefixText; 
-            
-            optionsEl.innerHTML = '';
-            feedbackEl.textContent = '';
-            nextButton.style.display = 'none';
-
-            options.forEach(option => {
-                const button = document.createElement('button');
-                button.className = 'option-button';
-                button.textContent = option.length > 1 ? option.match(/.{1,1}/g).join(' ') : option; 
-                button.onclick = () => checkAnswer(button, option, correctAnswer);
-                optionsEl.appendChild(button);
-            });
-            
-            prefixEl.scrollLeft = prefixEl.scrollWidth;
-        }
-
-        function checkAnswer(button, selectedOption, correctAnswer) {
-            Array.from(optionsEl.children).forEach(btn => btn.disabled = true);
-            
-            if (selectedOption === correctAnswer) {
-                button.style.backgroundColor = '#28a745'; 
-                feedbackEl.textContent = "¡Cálculo de Órbita Correcto! 🛰️ ¡Adelante!";
-                feedbackEl.className = 'correct';
-                currentScore += currentLevel * answerLength * 10; 
-                scoreEl.textContent = currentScore;
-                nextButton.style.display = 'block';
-                
-                currentDecimalIndex += answerLength;
-                currentLevel++;
-            } else {
-                button.style.backgroundColor = '#dc3545'; 
-                feedbackEl.textContent = `¡Desviación Crítica! 💥 La secuencia correcta era: ${correctAnswer}`;
-                feedbackEl.className = 'incorrect';
-                
-                const correctBtn = Array.from(optionsEl.children).find(btn => btn.textContent.replace(/\s/g, '') === correctAnswer);
-                if (correctBtn) {
-                    correctBtn.style.backgroundColor = '#ffc107';
-                }
-                
-                endGame(false);
-            }
-        }
-
-        function endGame(win) {
-            optionsEl.innerHTML = '';
-            nextButton.style.display = 'none';
-            
-            document.getElementById('final-level').textContent = currentLevel;
-            document.getElementById('final-score').textContent = currentScore;
-
-            if (win) {
-                gameOverTitle.textContent = "¡Misión Completa! 🏆 Has mapeado los decimales conocidos.";
-                gameOverModalContent.classList.add('game-over-win');
-                gameOverTitle.style.color = '#28a745';
-            } else {
-                gameOverTitle.textContent = "¡Colisión con un Cúmulo de Error! 💀";
-                gameOverModalContent.classList.remove('game-over-win');
-                gameOverTitle.style.color = '#dc3545';
-            }
-            
-            if (currentScore > 0 && isHighScore(currentScore)) {
-                nicknameFormEl.style.display = 'block';
-                restartButton.style.display = 'none'; 
-                
-                nickname = "";
-                updateNicknameDisplay();
-                renderKeyboard();
-            } else {
-                 nicknameFormEl.style.display = 'none';
-                 restartButton.style.display = 'block';
-            }
-
-            openModal('game-over-modal'); 
-        }
-
-        // Evento para pasar al siguiente nivel
-        nextButton.addEventListener('click', renderQuestion);
-
-        // Iniciar el juego
-        renderQuestion();
-        loadHighScores(); 
-    </script>
-</body>
-</html>
+            scores = scores
